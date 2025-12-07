@@ -1,0 +1,58 @@
+# Security - Never commit these files
+encryption.key
+encryption_key_backup.txt
+*.key
+*.pem
+*.private
+
+# Database with potentially sensitive data
+onions.db
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+crawler_audit.log
+
+# Temporary
+*.tmp
+temp/
+tmp/
