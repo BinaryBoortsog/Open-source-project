@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <title>Монгол Улсаас БНСУ-д суугаа Элчин сайдын яам</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    img.logo { width: 200px; height: auto; margin-bottom: 16px; }
+    h1 { font-size: 28px; font-weight: bold; margin-bottom: 20px; }
+    h3 { margin-bottom: 12px; text-align: left; font-size: 18px; }
+    .row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left; }
+    label { font-size: 18px; color: #333; }
+    .auto-input, .auto-textarea {
+      font-size: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #999;
+      width: 100%;
+      box-sizing: border-box;
+      line-height: 1.4;
+    }
+    .uppercase { text-transform: uppercase; }
+    button[type=submit] {
+      padding: 14px 24px; margin-top: 20px; font-size: 18px;
+      background: #43a047; color: white; border: none; border-radius: 10px;
+      cursor: pointer; width: 100%;
+    }
+    button[type=submit]:hover { background: #2e7d32; }
+    #notice {
+      margin-top: 16px; font-size: 15px; color: #555; line-height: 1.6; text-align: justify;
+    }
+
+    /* ========== POPUP ========== */
+    #popupOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #popupBox {
+      background: white;
+      padding: 30px;
+      border-radius: 14px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    #popupClose {
+      margin-top: 18px;
+      padding: 10px 20px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="./assets/logo.png" class="logo">
+  <h1>Монгол Улсаас БНСУ-д суугаа<br>Элчин сайдын яам</h1>
+
+  <form id="form">
+
+    <h3>ИТГЭМЖЛЭЛ ГАРГАГЧ:</h3>
+
+    <div class="row">
+      <label>БНСУ дахь гэрийн хаяг:</label>
+      <textarea name="address" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Регистрийн дугаар:</label>
+      <textarea name="passport" class="auto-textarea uppercase" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Ургийн овог:</label>
+      <textarea name="FamilyName" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Овог:</label>
+      <textarea name="SureName" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Нэр:</label>
+      <textarea name="name" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Утасны дугаар:</label>
+      <input name="phoneNumber" class="auto-input" type="tel" pattern="[0-9]*" inputmode="numeric" required>
+    </div>
+
+    <h3>ИТГЭМЖЛЭГДСЭН ТӨЛӨӨЛӨГЧ:</h3>
+
+    <div class="row">
+      <label>E-Mongolia-д бүртгэлтэй гэрийн хаяг:</label>
+      <textarea name="address2" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Регистрийн дугаар:</label>
+      <textarea name="passport2" class="auto-textarea uppercase" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Ургийн овог:</label>
+      <textarea name="receiverFamilyName" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Овог:</label>
+      <textarea name="receiverSureName" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Нэр:</label>
+      <textarea name="receiverName" class="auto-textarea" required></textarea>
+    </div>
+
+    <div class="row">
+      <label>Утасны дугаар:</label>
+      <input name="receiverPhoneNumber" class="auto-input" type="tel" pattern="[0-9]*" inputmode="numeric" required>
+    </div>
+
+    <button type="submit">илгээх</button>
+
+    <div id="notice">
+      Та итгэмжлэл бичиж дуусаад QR кодны зургийг авч итгэмжлэгдсэн төлөөлөгчдөө илгээх бөгөөд төлөөлөгч нь 1 өдрийн дараа Монгол Улсад...
+    </div>
+  </form>
+
+  <!-- POPUP -->
+  <div id="popupOverlay">
+    <div id="popupBox">
+      <div id="popupMessage">Код: ----</div>
+      <button id="popupClose">Хаах</button>
+    </div>
+  </div>
+
+<script>
+
+  /* ===== Allow only Mongolian Cyrillic ===== */
+  function allowMongolianOnly(el) {
+    el.value = el.value.replace(/[^А-Яа-яӨөҮүЁё\s]/g, '');
+  }
+  document.querySelectorAll(".auto-textarea").forEach(el => {
+    el.addEventListener("input", () => allowMongolianOnly(el));
+  });
+
+  /* ===== Popup controls ===== */
+  const overlay = document.getElementById("popupOverlay");
+  const msg = document.getElementById("popupMessage");
+  document.getElementById("popupClose").onclick = () => overlay.style.display = "none";
+
+  /* ===== FORM SUBMIT ===== */
+  document.getElementById("form").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    /* STOP IF ANY FIELD IS EMPTY */
+    const fields = e.target.querySelectorAll("input, textarea");
+    for (const f of fields) {
+      if (!f.value.trim()) {
+        msg.innerHTML = "⚠️ Бүх талбарыг бүрэн бөглөнө үү.";
+        overlay.style.display = "flex";
+        return;
+      }
+    }
+
+    const formData = Object.fromEntries(new FormData(e.target).entries());
+
+    try {
+      const res = await fetch("/form/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        msg.innerHTML = `✅ Таны код:<br><span style="font-size:32px">${data.code}</span>`;
+        overlay.style.display = "flex";
+        e.target.reset();
+      } else {
+        msg.innerHTML = "❌ Алдаа гарлаа";
+        overlay.style.display = "flex";
+      }
+
+    } catch (err) {
+      msg.innerHTML = "❌ Сервер эсвэл сүлжээний алдаа!";
+      overlay.style.display = "flex";
+    }
+  });
+</script>
+
+</body>
+</html>

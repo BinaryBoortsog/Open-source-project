@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <title>Монгол Улсаас БНСУ-д суугаа Элчин сайдын яам</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 2px solid #1976d2;
+      padding-bottom: 4px;
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #999;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    button.search-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      background: #43a047;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button.search-btn:hover {
+      background: #2e7d32;
+    }
+
+    .section {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .auto-textarea {
+      flex: 1;
+      padding: 8px;
+      resize: none;
+      overflow: hidden;
+      min-height: 40px;
+      line-height: 22px;
+      border: 1px solid #999;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .copy-btn {
+      padding: 6px 12px;
+      cursor: pointer;
+      border: none;
+      background: #1976d2;
+      color: white;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    .copy-btn:hover {
+      background: #0d47a1;
+    }
+
+    h4 {
+      margin: 5px 0;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Монгол Улсаас БНСУ-д суугаа Элчин сайдын яам</h2>
+
+  <div class="row">
+    <input type="text" id="code" placeholder="Кодоо оруулна уу">
+    <button class="search-btn" onclick="lookup()">Хайх</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    function autoResize(textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+
+    function createField(label, value) {
+      const container = document.createElement("div");
+      container.className = "row";
+
+      const ta = document.createElement("textarea");
+      ta.className = "auto-textarea";
+      ta.value = value || "";
+      ta.readOnly = true;
+      autoResize(ta);
+      ta.addEventListener("input", () => autoResize(ta));
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.textContent = "Хуулж авах";
+      btn.onclick = () => {
+        navigator.clipboard.writeText(ta.value);
+        btn.textContent = "Хуулсан!";
+        setTimeout(() => btn.textContent = "Хуулж авах", 1200);
+      };
+
+      const title = document.createElement("h4");
+      title.textContent = label;
+
+      const fieldContainer = document.createElement("div");
+      fieldContainer.style.flex = "1";
+      fieldContainer.appendChild(title);
+      fieldContainer.appendChild(ta);
+
+      container.appendChild(fieldContainer);
+      container.appendChild(btn);
+
+      return container;
+    }
+
+    async function lookup() {
+      const code = document.getElementById("code").value.trim();
+      if (!code) return alert("Кодоо оруулна уу");
+
+      try {
+        const res = await fetch("/form/lookup/" + code);
+        if (!res.ok) throw new Error("Код олдсонгүй");
+
+        const data = await res.json();
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "";
+
+        // Итгэмжлэгчийн мэдээлэл
+        const personSection = document.createElement("div");
+        personSection.className = "section";
+        const personHeading = document.createElement("h3");
+        personHeading.textContent = "Итгэмжлэгчийн мэдээлэл";
+        personSection.appendChild(personHeading);
+
+        const person = data.personInfo;
+        personSection.appendChild(createField("Гэрийн хаяг", person.address));
+        personSection.appendChild(createField("Регистрийн дугаар", person.passport));
+        personSection.appendChild(createField("Ургийн овог", person.FamilyName));
+        personSection.appendChild(createField("Овог", person.SureName));
+        personSection.appendChild(createField("Нэр", person.name));
+        personSection.appendChild(createField("Утасны дугаар", person.phoneNumber));
+
+        resultDiv.appendChild(personSection);
+
+        // Итгэмжлэгдсэн төлөөлөгчийн мэдээлэл
+        const receiverSection = document.createElement("div");
+        receiverSection.className = "section";
+        const receiverHeading = document.createElement("h3");
+        receiverHeading.textContent = "Итгэмжлэгдсэн төлөөлөгчийн мэдээлэл";
+        receiverSection.appendChild(receiverHeading);
+
+        const receiver = data.receiverInfo;
+        receiverSection.appendChild(createField("Гэрийн хаяг", receiver.address2));
+        receiverSection.appendChild(createField("Регистрийн дугаар", receiver.passport2));
+        receiverSection.appendChild(createField("Ургийн овог", receiver.receiverFamilyName));
+        receiverSection.appendChild(createField("Овог", receiver.receiverSureName));
+        receiverSection.appendChild(createField("Нэр", receiver.receiverName));
+        receiverSection.appendChild(createField("Утасны дугаар", receiver.receiverPhoneNumber));
+
+        resultDiv.appendChild(receiverSection);
+
+      } catch (err) {
+        alert(err.message);
+        document.getElementById("result").innerHTML = "";
+      }
+    }
+  </script>
+
+</body>
+</html>
