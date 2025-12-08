@@ -66,7 +66,6 @@ tor-crawler/
 ├── test_seeds.py              # Seed discovery test
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # User documentation
-└── SECURITY_RECOMMENDATIONS.md # Security hardening guide
 ```
 
 # Quick Start Guide
