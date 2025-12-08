@@ -13,7 +13,7 @@ A crawler, or web spider/bot, is an automated software program that systematical
 
 # What i tried to build ?
 
-My project is Tor onion crawler . Python apllication it is designed to crawl through public accessible (onion sites ). It starts from seed URLs and recursively follows links, much like a standard crawler, but on the hidden network. Crawling is used for Cybercrime Research , Threat Intelligence and data collection.
+My project is Tor onion crawler and it is very basig crawling software . If you want to find more link you can add seed urls by manually or modify the code. Python apllication it is designed to crawl through public accessible (onion sites ). It starts from seed URLs and recursively follows links, much like a standard crawler, but on the hidden network. Crawling is used for Cybercrime Research , Threat Intelligence and data collection.
 # Alert this project is only for education and research purpose. Only for my interest in cypersecurity and for studying.
 # !!! RECOMMENDING NOT TRY GET INTO CRAWLED ONION URLS IT CAN BE SOME SECURITY VULNERABILITIES .
 
