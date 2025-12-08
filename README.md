@@ -1,3 +1,5 @@
+#Docke is added to software read the Portable_setup.mn
+
 # Tor Onion Crawler - Open Source Project Report
 ## Summary
 
