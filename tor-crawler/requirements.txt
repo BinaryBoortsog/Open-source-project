@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+PySocks
+fastapi
+uvicorn
+jinja2
+cryptography
