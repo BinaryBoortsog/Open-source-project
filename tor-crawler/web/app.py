@@ -14,13 +14,35 @@ templates = Jinja2Templates(directory="web/templates")
 # Try to create static directory
 import os
 os.makedirs("web/static", exist_ok=True)
+os.makedirs("data", exist_ok=True)
+
+# Initialize database if it doesn't exist
+def init_db():
+    """Initialize database with required schema."""
+    try:
+        conn = sqlite3.connect("/app/data/onions.db")
+        c = conn.cursor()
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS pages (
+                url TEXT PRIMARY KEY,
+                html TEXT,
+                crawled_at TIMESTAMP,
+                backup_status TEXT DEFAULT 'pending'
+            )
+        """)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[!] Database init error: {e}")
+
+init_db()
 
 
 @app.get("/")
 def index(request: Request):
     """Homepage with crawler stats and discovered onions."""
     try:
-        conn = sqlite3.connect("onions.db")
+        conn = sqlite3.connect("data/onions.db")
         c = conn.cursor()
         
         # Get stats
@@ -47,7 +69,7 @@ def index(request: Request):
 def api_stats():
     """API endpoint for crawler stats (JSON)."""
     try:
-        conn = sqlite3.connect("onions.db")
+        conn = sqlite3.connect("data/onions.db")
         c = conn.cursor()
         
         total = c.execute("SELECT COUNT(*) FROM pages").fetchone()[0]

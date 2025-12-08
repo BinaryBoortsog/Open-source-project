@@ -11,8 +11,8 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s'
 )
 
-DB_PATH = "onions.db"
-BACKUP_DIR = "backups"
+DB_PATH = "data/onions.db"
+BACKUP_DIR = "data/backups"
 CHECKPOINT_EVERY = 10  # Save after every N pages
 
 # Create backup directory

@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  tor:
+    image: osminogin/tor-simple
+    container_name: tor
+    ports:
+      - "9050:9050"
+    restart: always
+
+  tor-crawler:
+    build: .
+    container_name: tor-crawler
+    restart: always
+    depends_on:
+      - tor
+    environment:
+      TOR_PROXY: socks5h://tor:9050
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data    # Use top-level ./data folder
+      - ./tor-crawler/web:/app/web
